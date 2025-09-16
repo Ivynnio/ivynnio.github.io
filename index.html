@@ -1,20 +1,1471 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Steam Scanner</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ivynnio Page</title>
     <style>
-      html, body {
-        margin: 0;
-        height: 100%;
-      }
-      iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-muted: #888888;
+            --accent-primary: #ff0000;
+            --accent-secondary: #cc0000;
+            --accent-tertiary: #ff3333;
+            --accent-gradient: linear-gradient(135deg, #ff0000, #cc0000, #ff3333);
+            --border: #333333;
+            --border-light: #444444;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.5);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --hover-bg: #2a2a2a;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            font-weight: 400;
+            line-height: 1.6;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        /* Splash Screen Styles */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .splash-content {
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+        }
+        .splash-logo {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+        }
+        .splash-text {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            color: var(--text-secondary);
+        }
+        .language-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .language-btn {
+            padding: 1rem 2rem;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 160px;
+            justify-content: center;
+        }
+        .language-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 320px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 2px solid var(--border);
+            padding: 2rem 1.5rem;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            box-shadow: var(--shadow-xl);
+            transform: translateX(-100%);
+            overflow-y: auto;
+            overflow-x: hidden;
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 3px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-secondary);
+        }
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+        .sidebar:not(.collapsed) {
+            transform: translateX(0);
+        }
+        .sidebar-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar-toggle:hover {
+            background: var(--hover-bg);
+            transform: translateX(2px);
+        }
+        .sidebar-toggle .arrow {
+            transition: transform 0.3s ease;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+        .sidebar.collapsed ~ .main-content .sidebar-toggle .arrow {
+            transform: rotate(0deg);
+        }
+        .sidebar:not(.collapsed) ~ .main-content .sidebar-toggle .arrow {
+            transform: rotate(180deg);
+        }
+        .sidebar:not(.collapsed) ~ .main-content .sidebar-toggle {
+            left: 270px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 3rem;
+            padding: 1rem;
+            background: var(--accent-gradient);
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .nav-menu {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 1.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+            border-color: var(--accent-primary);
+            transform: translateX(4px);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+        }
+        .music-player {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-top: auto;
+            border: 1px solid var(--border);
+        }
+        .music-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--accent-primary);
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        .page {
+            display: none;
+            padding: 2rem;
+            min-height: 100vh;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .profiles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .profile-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .project-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            height: fit-content;
+        }
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.15);
+        }
+        /* Theme Selector Button Style */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1002;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        .theme-selector {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1002;
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-xl);
+            min-width: 280px;
+        }
+        .theme-selector.active {
+            display: flex;
+        }
+        .color-wheel-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            cursor: crosshair;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        .color-wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                red, yellow, lime, cyan, blue, magenta, red
+            );
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+        .color-wheel:hover {
+            transform: scale(1.05);
+        }
+        .color-picker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid white;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: all 0.1s ease;
+            z-index: 10;
+        }
+        .preset-colors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        .preset-color {
+            width: 30px;
+            height: 30px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .preset-color:hover {
+            transform: scale(1.2);
+            border-color: white;
+        }
+        .preset-color.active {
+            border-color: white;
+            box-shadow: 0 0 15px currentColor;
+        }
+        .theme-transition {
+            animation: themeChange 0.6s ease;
+        }
+        @keyframes themeChange {
+            0% { filter: hue-rotate(0deg) brightness(1); }
+            25% { filter: hue-rotate(90deg) brightness(1.2); }
+            50% { filter: hue-rotate(180deg) brightness(0.8); }
+            75% { filter: hue-rotate(270deg) brightness(1.1); }
+            100% { filter: hue-rotate(360deg) brightness(1); }
+        }
+        .color-info {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            will-change: opacity;
+        }
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .fullscreen-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .fullscreen-modal.active {
+            display: block;
+            opacity: 1;
+        }
+        .modal-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+            border-bottom: 2px solid var(--border);
+            background: var(--bg-secondary);
+        }
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .close-btn {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-gradient);
+            border: 2px solid var(--accent-primary);
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .modal-body {
+            flex: 1;
+            overflow: hidden;
+        }
+        .modal-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: var(--bg-primary);
+        }
+        /* Improved Music Player Styles */
+        .music-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            position: relative;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--accent-gradient);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .song-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .song-btn {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+        }
+        .song-btn:hover {
+            background: var(--bg-tertiary);
+        }
+        .song-btn.active {
+            background: var(--accent-gradient);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+        /* Social Media Styles - Modified */
+        .social-media {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            justify-content: center;
+            max-width: 400px;
+            margin: 3rem auto 0;
+            position: relative;
+            width: 40%;
+        }
+        .social-item {
+            text-decoration: none;
+            color: var(--text-primary);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .social-item:hover {
+            transform: translateY(-5px);
+        }
+        .social-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--accent-gradient);
+            border-radius: 30%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+        .social-icon svg {
+            width: 32px;
+            height: 32px;
+        }
+        .social-item:hover .social-icon {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(255, 0, 0, 0.3);
+        }
+        .social-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        /* Dashboard Container */
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: calc(100vh - 4rem);
+            position: relative;
+        }
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 280px;
+            }
+            
+            .sidebar:not(.collapsed) ~ .main-content .sidebar-toggle {
+                left: 230px;
+            }
+            .social-media {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                width: 90%;
+            }
+        }
+        @media (max-width: 768px) {
+            .social-media {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .social-icon {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .social-icon svg {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .social-name {
+                font-size: 0.8rem;
+            }
+            
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+            }
+            
+            .theme-selector {
+                top: 60px;
+                right: 1rem;
+            }
+            
+            .page {
+                padding: 1.5rem;
+            }
+            
+            .welcome-text {
+                font-size: clamp(2rem, 6vw, 3rem) !important;
+            }
+            
+            .joji-gif {
+                max-width: 100% !important;
+                width: 70% !important;
+            }
+            
+            .language-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .language-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+        @media (max-width: 480px) {
+            .social-media {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.8rem;
+                width: 95%;
+            }
+            
+            .social-icon {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .social-icon svg {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .social-name {
+                font-size: 0.75rem;
+            }
+            
+            .music-player {
+                padding: 1rem;
+            }
+            
+            .music-controls {
+                gap: 0.5rem;
+            }
+            
+            .music-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+            
+            .song-selector {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .song-btn {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.4rem;
+            }
+            .theme-selector {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 180px;
+            }
+        }
     </style>
-  </head>
-  <body>
-    <iframe src="https://steam-scanner.vercel.app/"></iframe>
-  </body>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">Ivynnio</div>
+            <div class="splash-text">Please select your language / Silakan pilih bahasa Anda</div>
+            <div class="language-buttons">
+                <button class="language-btn" onclick="selectLanguage('en')">
+                    🇺🇸 English
+                </button>
+                <button class="language-btn" onclick="selectLanguage('id')">
+                    🇮🇩 Indonesia
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="app">
+        <!-- Theme Toggle Button -->
+        <div class="theme-toggle" onclick="toggleThemeSelector()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <!-- Theme Selector -->
+        <div class="theme-selector" id="themeSelector">
+            <div class="color-wheel-container" id="colorWheelContainer">
+                <div class="color-wheel" id="colorWheel"></div>
+                <div class="color-picker" id="colorPicker"></div>
+            </div>
+            <div class="preset-colors" id="presetColors"></div>
+            <div class="color-info" id="colorInfo">Klik pada roda warna untuk memilih tema</div>
+        </div>
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        <!-- Fullscreen Modal -->
+        <div class="fullscreen-modal" id="fullscreenModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalTitle"></h2>
+                    <button class="close-btn" onclick="closeFullscreen()">×</button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="modalIframe"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <nav class="sidebar collapsed" id="sidebar">
+                <div class="logo">
+                    <div class="logo-icon" style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.2); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text" style="font-size: 18px; font-weight: 600; color: white; letter-spacing: -0.02em;">
+                        Ivynnio
+                    </div>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <div class="nav-link active" onclick="showPage('dashboard')">
+                            <div class="nav-icon" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                    <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <span class="nav-text" data-en="Dashboard" data-id="Dashboard">Dashboard</span>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="nav-link" onclick="showPage('projects')">
+                            <div class="nav-icon" style="width: 20px; height: 20px; display; flex; align-items: center; justify-content: center;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <span class="nav-text" data-en="Projects" data-id="Proyek">Proyek Saya</span>
+                        </div>
+                    </li>
+                </ul>
+                <!-- Enhanced Music Player -->
+                <div class="music-player">
+                    <div class="music-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; color: var(--text-primary); font-weight: 600;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 18V5L21 3V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span class="music-title" data-en="Music" data-id="Musik">Musik</span>
+                    </div>
+                    <div class="music-info" style="font-size: 0.875rem; color: var(--text-secondary); text-align: center; margin-bottom: 1rem; padding: 0.5rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                        <div class="current-track" id="currentTrack">
+                            Die For You - Joji
+                        </div>
+                    </div>
+                    <div class="time-display">
+                        <span id="currentTime">0:00</span>
+                        <span id="totalTime">0:00</span>
+                    </div>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="music-controls">
+                        <button class="music-btn" onclick="previousSong()" title="Previous">⏮</button>
+                        <button class="music-btn" onclick="togglePlayPause()" title="Play/Pause" id="playPauseBtn">⏸</button>
+                        <button class="music-btn" onclick="nextSong()" title="Next">⏭</button>
+                    </div>
+                    <div class="volume-control" style="display: flex; align-items: center; gap: 8px;">
+                        <span>🔊</span>
+                        <input type="range" class="volume-slider" min="0" max="100" value="50" onchange="setVolume(this.value)" style="flex: 1; height: 4px; background: var(--border); border-radius: 2px; outline: none; cursor: pointer; appearance: none;">
+                    </div>
+                    <div class="song-selector">
+                        <button class="song-btn active" onclick="changeSong(0)">Joji - Die For You</button>
+                    </div>
+                </div>
+            </nav>
+            <main class="main-content" style="width: 100%; min-height: 100vh; position: relative;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <span class="arrow">→</span>
+                </button>
+                <!-- Dashboard Page -->
+                <div class="page" id="dashboard">
+                    <div class="dashboard-container">
+                        <div>
+                            <div class="language-selector" style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem;">
+                                <button class="language-btn active" onclick="changeLanguage('id')" style="padding: 0.75rem 1.5rem; background: var(--accent-gradient); border: 2px solid var(--border); border-radius: var(--radius-lg); color: white; cursor: pointer; transition: all 0.3s ease; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                                    🇮🇩 <span>Indonesia</span>
+                                </button>
+                                <button class="language-btn" onclick="changeLanguage('en')" style="padding: 0.75rem 1.5rem; background: var(--bg-secondary); border: 2px solid var(--border); border-radius: var(--radius-lg; color: var(--text-secondary); cursor: pointer; transition: all 0.3s ease; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                                    🇺🇸 <span>English</span>
+                                </button>
+                            </div>
+                            <div class="welcome-section" style="text-align: center; margin-bottom: 4rem;">
+                                <h1 class="welcome-text" style="font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem;" data-en="Welcome!" data-id="Selamat Datang!">
+                                    Selamat Datang User
+                                </h1>
+                                <p class="welcome-subtitle" style="color: var(--text-secondary); font-size: 1.25rem; max-width: 600px; margin: 0 auto;" data-en="Have a nice day!" data-id="Semoga hari kamu menyenangkan!">
+                                    Semoga hari kamu menyenangkan!
+                                </p>
+                            </div>
+                            <!-- Joji Video Container -->
+                            <div class="joji-gif-container" style="display: flex; justify-content: center; margin: 2rem 0; max-width: 800px; width: 30%; margin-left: auto; margin-right: auto;">
+                                <div class="tenor-gif-embed" data-postid="19483208" data-share-method="host" data-aspect-ratio="1.37339" data-width="100%" style="max-width: 600px; border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); overflow: hidden;">
+                                    <a href="https://wicked-harlequin-zt6fs5m9lw.edgeone.app/joji.mp4">Joji Sad GIF</a>
+                                </div>
+                                <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+                            </div>
+                            
+                            <!-- Social Media -->
+                            <div class="social-media">
+                                <!-- YouTube -->
+                                <a href="https://youtube.com/@Ivynnio" target="_blank" class="social-item">
+                                    <div class="social-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
+                                            <path d="M23.498 6.186a2.995 2.995 0 0 0-2.11-2.12C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.388.566a2.995 2.995 0 0 0-2.11 2.12A31.36 31.36 0 0 0 .5 12a31.36 31.36 0 0 0 .002 5.814 2.995 2.995 0 0 0 2.11 2.12C4.5 20.5 12 20.5 12 20.5s7.5 0 9.388-.566a2.995 2.995 0 0 0 2.11-2.12A31.36 31.36 0 0 0 23.5 12a31.36 31.36 0 0 0-.002-5.814zM9.75 15.02v-6.04L15.5 12l-5.75 3.02z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="social-name">YouTube</span>
+                                </a>
+                                <!-- Telegram -->
+                                <a href="https://t.me/Reyvinaldo" target="_blank" class="social-item">
+                                    <div class="social-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
+                                            <path d="M9.999 15.168 9.936 19a.75.75 0 0 0 1.19.615l2.294-1.635 3.69 2.7c.675.494 1.635.12 1.796-.705l3.044-15.148c.18-.9-.75-1.62-1.56-1.2L2.468 10.393c-.84.45-.81 1.695.045 2.1l5.328 2.478 10.575-8.34-8.417 8.537z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="social-name">Telegram</span>
+                                </a>
+                                <!-- Instagram -->
+                                <a href="https://instagram.com/Reyvinaldo" target="_blank" class="social-item">
+                                    <div class="social-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
+                                            <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3h10zm-5 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2c1.65 0 3 1.35 3 3s-1.35 3-3 3a3 3 0 0 1 0-6zm4.5-2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="social-name">Instagram</span>
+                                </a>
+                                <!-- GitHub -->
+                                <a href="https://github.com/ivynnio" target="_blank" class="social-item">
+                                    <div class="social-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
+                                            <path d="M12 .5C5.648.5.5 5.648.5 12c0 5.092 3.292 9.397 7.865 10.919.575.104.785-.25.785-.555 0-.274-.01-1.002-.015-1.966-3.2.696-3.875-1.543-3.875-1.543-.523-1.328-1.278-1.682-1.278-1.682-1.044-.714.08-.699.08-.699 1.154.081 1.76 1.185 1.76 1.185 1.026 1.756 2.691 1.248 3.347.954.104-.743.402-1.248.731-1.536-2.554-.29-5.236-1.278-5.236-5.688 0-1.257.448-2.285 1.184-3.092-.119-.29-.513-1.457.112-3.04 0 0 .967-.31 3.168 1.18a11.046 11.046 0 0 1 2.886-.389c.979.004 1.964.132 2.886.389 2.201-1.49 3.166-1.18 3.166-1.18.627 1.583.233 2.75.115 3.04.738.807 1.183 1.835 1.183 3.092 0 4.42-2.686 5.394-5.25 5.678.413.357.781 1.067.781 2.151 0 1.552-.014 2.804-.014 3.183 0 .307.207.664.791.552C20.710 21.394 24 17.090 24 12c0-6.352-5.148-11.5-12-11.5z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="social-name">GitHub</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Projects Page -->
+                <div class="page" id="projects">
+                    <h2 class="section-header" style="font-size: 3rem; font-weight: 700; text-align: center; margin-bottom: 3rem; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;" data-en="Projects" data-id="Proyek">
+                        Proyek
+                    </h2>
+                    <div class="projects-grid">
+                        <div class="project-card" onclick="openFullscreen('Steam DRM Scanner', 'https://steam-scanner.vercel.app/')">
+                            <h3 class="project-title" style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                Steam DRM Scanner
+                            </h3>
+                            <p class="project-desc" style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem; font-size: 0.9rem;" data-en="Advanced tool for scanning Steam games and analyzing DRM protection systems." data-id="Tool canggih untuk memindai game Steam dan menganalisis sistem proteksi DRM.">
+                                Tool canggih untuk memindai game Steam dan menganalisis sistem proteksi DRM.
+                            </p>
+                            <div class="project-tech" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                <span class="tech-tag" style="background: var(--bg-tertiary); border: 1px solid var(--accent-primary); border-radius: var(--radius); padding: 0.25rem 0.5rem; font-size: 0.7rem; color: var(--accent-primary); font-weight: 500;">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <!-- Multiple audio elements for different songs -->
+        <audio id="audioPlayer" preload="auto"></audio>
+    </div>
+    <script>
+        // Global variables
+        let currentLanguage = 'id';
+        let currentColor = '#ff0000';
+        let sidebarCollapsed = true;
+        let currentPage = 'dashboard';
+        let isPlaying = false;
+        let currentSongIndex = 0;
+        let isDragging = false;
+        
+        // Song list with metadata
+        const songs = [
+            {
+                title: "Die For You - Joji",
+                src: "https://technical-turquoise-nownlvgqi7.edgeone.app/dieforyou.mp3",
+                duration: "3:31"
+            },
+            {
+                title: "Glimpse of Us - Joji",
+                src: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_5b8b48f9f2.mp3?filename=cinematic-documentary-piano-118527.mp3",
+                duration: "4:20"
+            },
+            {
+                title: "Slow Dancing in the Dark - Joji",
+                src: "https://cdn.pixabay.com/download/audio/2021/10/25/audio_5b8b4ab13a.mp3?filename=epic-cinematic-trailer-112103.mp3",
+                duration: "3:30"
+            }
+        ];
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Always show splash screen
+            document.getElementById('splash-screen').style.display = 'flex';
+            
+            // Load saved preferences
+            const savedColor = localStorage.getItem('themeColor') || '#ff0000';
+            const savedVolume = localStorage.getItem('volume') || 50;
+            const savedSongIndex = localStorage.getItem('songIndex') || 0;
+            
+            changeThemeColor(savedColor);
+            
+            // Set up audio player
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.volume = savedVolume / 100;
+            document.querySelector('.volume-slider').value = savedVolume;
+            
+            // Load saved song (but don't play yet)
+            currentSongIndex = parseInt(savedSongIndex);
+            changeSong(currentSongIndex, false);
+            
+            // Initialize color wheel
+            initializeColorWheel();
+        });
+        
+        function selectLanguage(lang) {
+            // Hide splash screen
+            document.getElementById('splash-screen').style.opacity = '0';
+            document.getElementById('splash-screen').style.visibility = 'hidden';
+            
+            // Set language (but don't save to localStorage)
+            currentLanguage = lang;
+            
+            // Initialize theme and other settings
+            const savedColor = localStorage.getItem('themeColor') || '#ff0000';
+            const savedVolume = localStorage.getItem('volume') || 50;
+            const savedSongIndex = localStorage.getItem('songIndex') || 0;
+            
+            changeThemeColor(savedColor);
+            changeLanguage(lang);
+            
+            // Set up audio player
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.volume = savedVolume / 100;
+            document.querySelector('.volume-slider').value = savedVolume;
+            
+            // Load first song and AUTO PLAY it
+            currentSongIndex = 0; // Always start with first song when language is selected
+            changeSong(currentSongIndex, true); // true to auto-play
+            
+            // Show dashboard page
+            showPage('dashboard');
+        }
+        
+        function toggleThemeSelector() {
+            const themeSelector = document.getElementById('themeSelector');
+            themeSelector.classList.toggle('active');
+        }
+        
+        // Close theme selector when clicking outside (but not when interacting with color wheel)
+        document.addEventListener('click', function(event) {
+            const themeSelector = document.getElementById('themeSelector');
+            const themeToggle = document.querySelector('.theme-toggle');
+            const colorWheelContainer = document.getElementById('colorWheelContainer');
+            
+            // Don't close if clicking on color wheel or its children
+            if (colorWheelContainer.contains(event.target)) {
+                return;
+            }
+            
+            if (!themeSelector.contains(event.target) && !themeToggle.contains(event.target) && themeSelector.classList.contains('active')) {
+                themeSelector.classList.remove('active');
+            }
+        });
+        
+        function initializeColorWheel() {
+            const colorWheel = document.getElementById('colorWheel');
+            const colorPicker = document.getElementById('colorPicker');
+            const colorWheelContainer = document.getElementById('colorWheelContainer');
+            const presetColorsContainer = document.getElementById('presetColors');
+            const colorInfo = document.getElementById('colorInfo');
+            
+            // Create preset colors
+            const presetColors = ['#ff0000', '#0066ff', '#00cc00', '#8800ff', '#ff6600', '#ff0088'];
+            presetColors.forEach(color => {
+                const colorBtn = document.createElement('div');
+                colorBtn.className = 'preset-color';
+                colorBtn.style.background = color;
+                if (color === currentColor) {
+                    colorBtn.classList.add('active');
+                }
+                colorBtn.onclick = () => changeThemeColor(color);
+                presetColorsContainer.appendChild(colorBtn);
+            });
+            
+            // Handle color wheel mouse events
+            colorWheelContainer.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                updateColorFromMouse(e);
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    updateColorFromMouse(e);
+                }
+            });
+            
+            document.addEventListener('mouseup', function() {
+                isDragging = false;
+            });
+            
+            // Handle touch events for mobile
+            colorWheelContainer.addEventListener('touchstart', function(e) {
+                isDragging = true;
+                e.preventDefault();
+                const touch = e.touches[0];
+                updateColorFromMouse(touch);
+            });
+            
+            document.addEventListener('touchmove', function(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    updateColorFromMouse(touch);
+                }
+            });
+            
+            document.addEventListener('touchend', function() {
+                isDragging = false;
+            });
+        }
+        
+        function updateColorFromMouse(e) {
+            const colorWheelContainer = document.getElementById('colorWheelContainer');
+            const colorPicker = document.getElementById('colorPicker');
+            const rect = colorWheelContainer.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const x = e.clientX - centerX;
+            const y = e.clientY - centerY;
+            
+            // Calculate angle and distance
+            let angle = Math.atan2(y, x);
+            let distance = Math.sqrt(x * x + y * y);
+            const radius = rect.width / 2;
+            
+            // Constrain to circle
+            if (distance > radius) {
+                distance = radius;
+            }
+            
+            // Convert to polar coordinates
+            angle = (angle + Math.PI * 2) % (Math.PI * 2);
+            const hue = (angle * 180 / Math.PI);
+            const saturation = (distance / radius) * 100;
+            const lightness = 50;
+            
+            // Convert HSL to Hex
+            const color = hslToHex(hue, saturation, lightness);
+            changeThemeColor(color);
+            
+            // Update picker position
+            const pickerX = centerX + Math.cos(angle) * distance - rect.left;
+            const pickerY = centerY + Math.sin(angle) * distance - rect.top;
+            colorPicker.style.left = pickerX + 'px';
+            colorPicker.style.top = pickerY + 'px';
+            colorPicker.style.background = color;
+        }
+        
+        function hslToHex(h, s, l) {
+            l /= 100;
+            const a = s * Math.min(l, 1 - l) / 100;
+            const f = n => {
+                const k = (n + h / 30) % 12;
+                const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+                return Math.round(255 * color).toString(16).padStart(2, '0');
+            };
+            return `#${f(0)}${f(8)}${f(4)}`;
+        }
+        
+        function hexToHsl(hex) {
+            const r = parseInt(hex.slice(1, 3), 16) / 255;
+            const g = parseInt(hex.slice(3, 5), 16) / 255;
+            const b = parseInt(hex.slice(5, 7), 16) / 255;
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+            
+            return {
+                h: h * 360,
+                s: s * 100,
+                l: l * 100
+            };
+        }
+        
+        function changeThemeColor(color) {
+            currentColor = color;
+            localStorage.setItem('themeColor', color);
+            
+            // Add theme transition animation
+            const app = document.getElementById('app');
+            app.classList.add('theme-transition');
+            setTimeout(() => {
+                app.classList.remove('theme-transition');
+            }, 600);
+            
+            // Generate color variations
+            const hsl = hexToHsl(color);
+            const primary = color;
+            const secondary = adjustColor(color, -20);
+            const tertiary = adjustColor(color, 20);
+            
+            // Update CSS variables
+            const root = document.documentElement;
+            root.style.setProperty('--accent-primary', primary);
+            root.style.setProperty('--accent-secondary', secondary);
+            root.style.setProperty('--accent-tertiary', tertiary);
+            root.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${primary}, ${secondary}, ${tertiary})`);
+            
+            // Update color info
+            const colorInfo = document.getElementById('colorInfo');
+            colorInfo.textContent = `Tema saat ini: ${color.toUpperCase()}`;
+            
+            // Update preset colors active state
+            document.querySelectorAll('.preset-color').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.style.background === color || rgbToHex(btn.style.background) === color) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Don't auto close theme selector when selecting from color wheel
+            // User will close manually by clicking outside or on theme toggle
+        }
+        
+        function adjustColor(color, amount) {
+            const hsl = hexToHsl(color);
+            hsl.l = Math.max(0, Math.min(100, hsl.l + amount));
+            return hslToHex(hsl.h, hsl.s, hsl.l);
+        }
+        
+        function rgbToHex(rgb) {
+            if (!rgb || !rgb.startsWith('rgb')) return rgb;
+            const values = rgb.match(/\d+/g);
+            if (!values || values.length < 3) return rgb;
+            return `#${values.slice(0, 3).map(x => parseInt(x).toString(16).padStart(2, '0')).join('')}`;
+        }
+        
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            // Don't save language preference to localStorage
+            
+            // Update language buttons
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.background = 'var(--bg-secondary)';
+                btn.style.color = 'var(--text-secondary)';
+            });
+            
+            const activeBtn = document.querySelector(`[onclick="changeLanguage('${lang}')"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.style.background = 'var(--accent-gradient)';
+                activeBtn.style.color = 'white';
+            }
+            
+            // Update all text elements
+            document.querySelectorAll('[data-en][data-id]').forEach(element => {
+                element.textContent = element.getAttribute(`data-${lang}`);
+            });
+        }
+        
+        function toggleSidebar() {
+            sidebarCollapsed = !sidebarCollapsed;
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            if (sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                overlay.classList.remove('active');
+            } else {
+                sidebar.classList.remove('collapsed');
+                overlay.classList.add('active');
+            }
+        }
+        
+        function showPage(pageId) {
+            currentPage = pageId;
+            
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            document.querySelector(`[onclick="showPage('${pageId}')"]`).classList.add('active');
+            
+            // Close sidebar on mobile after selection
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+        }
+        
+        function togglePlayPause() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            
+            if (isPlaying) {
+                audioPlayer.pause();
+                isPlaying = false;
+                playPauseBtn.textContent = '▶';
+            } else {
+                audioPlayer.play().catch(e => console.log('Playback failed:', e));
+                isPlaying = true;
+                playPauseBtn.textContent = '⏸';
+            }
+        }
+        
+        function setVolume(value) {
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.volume = parseInt(value) / 100;
+            localStorage.setItem('volume', value);
+        }
+        
+        function changeSong(index, play = true) {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const currentTrack = document.getElementById('currentTrack');
+            const songButtons = document.querySelectorAll('.song-btn');
+            
+            currentSongIndex = index;
+            localStorage.setItem('songIndex', index);
+            
+            // Update UI
+            currentTrack.textContent = songs[index].title;
+            songButtons.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Change source and play if requested
+            audioPlayer.src = songs[index].src;
+            if (play) {
+                // Try to play the song
+                const playPromise = audioPlayer.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        // Autoplay started successfully
+                        isPlaying = true;
+                        document.getElementById('playPauseBtn').textContent = '⏸';
+                    }).catch(error => {
+                        // Autoplay was prevented
+                        console.log('Autoplay was prevented:', error);
+                        isPlaying = false;
+                        document.getElementById('playPauseBtn').textContent = '▶';
+                        
+                        // Show a message to the user that they need to interact with the page first
+                        const musicInfo = document.querySelector('.music-info');
+                        const originalContent = musicInfo.innerHTML;
+                        musicInfo.innerHTML = '<div style="color: #ff6600;">Click the play button to start music</div>';
+                        
+                        // Restore original content after 3 seconds
+                        setTimeout(() => {
+                            musicInfo.innerHTML = `<div class="current-track" id="currentTrack">${songs[index].title}</div>`;
+                        }, 3000);
+                    });
+                }
+            }
+            
+            // Set up event listeners for audio player if not already set
+            if (!audioPlayer.hasEventListener) {
+                audioPlayer.addEventListener('timeupdate', updateProgress);
+                audioPlayer.addEventListener('ended', nextSong);
+                audioPlayer.addEventListener('loadedmetadata', function() {
+                    document.getElementById('totalTime').textContent = formatTime(audioPlayer.duration);
+                });
+                audioPlayer.hasEventListener = true;
+            }
+            
+            // Set up progress bar click if not already set
+            const progressContainer = document.getElementById('progressContainer');
+            if (!progressContainer.hasEventListener) {
+                progressContainer.addEventListener('click', setProgress);
+                progressContainer.hasEventListener = true;
+            }
+        }
+        
+        function nextSong() {
+            let nextIndex = (currentSongIndex + 1) % songs.length;
+            changeSong(nextIndex);
+        }
+        
+        function previousSong() {
+            let prevIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            changeSong(prevIndex);
+        }
+        
+        function updateProgress() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const progressBar = document.getElementById('progressBar');
+            const currentTime = document.getElementById('currentTime');
+            
+            const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            progressBar.style.width = `${percent}%`;
+            
+            currentTime.textContent = formatTime(audioPlayer.currentTime);
+        }
+        
+        function setProgress(e) {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const progressContainer = document.getElementById('progressContainer');
+            const width = progressContainer.clientWidth;
+            const clickX = e.offsetX;
+            
+            audioPlayer.currentTime = (clickX / width) * audioPlayer.duration;
+        }
+        
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            
+            const minutes = Math.floor(seconds / 60);
+            seconds = Math.floor(seconds % 60);
+            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+        
+        function openFullscreen(title, url) {
+            if (!url || typeof url !== 'string' || url.trim() === '') {
+                console.log('Invalid URL provided for fullscreen modal');
+                return;
+            }
+            
+            const modal = document.getElementById('fullscreenModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalIframe = document.getElementById('modalIframe');
+            
+            modalTitle.textContent = title;
+            modalIframe.src = url;
+            modal.classList.add('active');
+            
+            // Close sidebar if open
+            if (!sidebarCollapsed) {
+                toggleSidebar();
+            }
+            
+            // Close theme selector if open
+            document.getElementById('themeSelector').classList.remove('active');
+        }
+        
+        function closeFullscreen() {
+            const modal = document.getElementById('fullscreenModal');
+            const modalIframe = document.getElementById('modalIframe');
+            
+            modal.classList.remove('active');
+            // Use setTimeout to allow the fade-out transition to complete
+            setTimeout(() => {
+                modalIframe.src = '';
+            }, 300);
+        }
+        
+        // Handle resize event untuk responsivitas
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            // Pada layar besar, sidebar selalu terbuka
+            if (window.innerWidth > 1024 && sidebarCollapsed) {
+                sidebarCollapsed = false;
+                sidebar.classList.remove('collapsed');
+                overlay.classList.remove('active');
+                overlay.style.display = 'none';
+            }
+            // Pada layar kecil, sidebar selalu tertutup
+            else if (window.innerWidth <= 1024 && !sidebarCollapsed) {
+                sidebarCollapsed = true;
+                sidebar.classList.add('collapsed');
+                overlay.classList.remove('active');
+                overlay.style.display = 'none';
+            }
+        });
+    </script>
+</body>
 </html>
