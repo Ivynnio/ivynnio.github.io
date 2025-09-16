@@ -9,6 +9,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         :root {
             --bg-primary: #000000;
@@ -40,7 +44,6 @@
             color: var(--text-primary);
             overflow-x: hidden;
         }
-        /* Splash Screen Styles */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -101,7 +104,6 @@
             border-color: var(--accent-primary);
             color: var(--text-primary);
         }
-        /* Sidebar Styles */
         .sidebar {
             position: fixed;
             top: 0;
@@ -289,7 +291,6 @@
             border-color: var(--accent-primary);
             box-shadow: 0 8px 25px rgba(255, 0, 0, 0.15);
         }
-        /* Theme Selector Button Style */
         .theme-toggle {
             position: fixed;
             top: 20px;
@@ -488,7 +489,6 @@
             border: none;
             background: var(--bg-primary);
         }
-        /* Improved Music Player Styles */
         .music-controls {
             display: flex;
             align-items: center;
@@ -542,7 +542,6 @@
             color: white;
             border-color: var(--accent-primary);
         }
-        /* Social Media Styles - Modified */
         .social-media {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -586,7 +585,6 @@
             font-size: 0.9rem;
             font-weight: 500;
         }
-        /* Dashboard Container */
         .dashboard-container {
             display: flex;
             flex-direction: column;
@@ -594,7 +592,6 @@
             min-height: calc(100vh - 4rem);
             position: relative;
         }
-        /* Responsive Design */
         @media (max-width: 1024px) {
             .sidebar {
                 width: 280px;
@@ -651,6 +648,29 @@
                 max-width: 100% !important;
                 width: 70% !important;
             }
+
+            .background-video {
+                pointer-events: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                -webkit-touch-callout: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .video-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 10;
+                background: transparent;
+                pointer-events: none;
+                cursor: default;
+            }
+
             
             .language-buttons {
                 flex-direction: column;
@@ -716,7 +736,6 @@
     </style>
 </head>
 <body>
-    <!-- Splash Screen -->
     <div id="splash-screen">
         <div class="splash-content">
             <div class="splash-logo">Ivynnio</div>
@@ -732,14 +751,12 @@
         </div>
     </div>
     <div id="app">
-        <!-- Theme Toggle Button -->
         <div class="theme-toggle" onclick="toggleThemeSelector()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </div>
-        <!-- Theme Selector -->
         <div class="theme-selector" id="themeSelector">
             <div class="color-wheel-container" id="colorWheelContainer">
                 <div class="color-wheel" id="colorWheel"></div>
@@ -748,9 +765,7 @@
             <div class="preset-colors" id="presetColors"></div>
             <div class="color-info" id="colorInfo">Klik pada roda warna untuk memilih tema</div>
         </div>
-        <!-- Sidebar Overlay -->
         <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-        <!-- Fullscreen Modal -->
         <div class="fullscreen-modal" id="fullscreenModal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -801,7 +816,6 @@
                         </div>
                     </li>
                 </ul>
-                <!-- Enhanced Music Player -->
                 <div class="music-player">
                     <div class="music-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; color: var(--text-primary); font-weight: 600;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -841,7 +855,6 @@
                 <button class="sidebar-toggle" onclick="toggleSidebar()">
                     <span class="arrow">→</span>
                 </button>
-                <!-- Dashboard Page -->
                 <div class="page" id="dashboard">
                     <div class="dashboard-container">
                         <div>
@@ -861,17 +874,14 @@
                                     Semoga hari kamu menyenangkan!
                                 </p>
                             </div>
-                            <!-- Joji Video Container -->
-                            <div class="joji-gif-container" style="display: flex; justify-content: center; margin: 2rem 0; max-width: 800px; width: 30%; margin-left: auto; margin-right: auto;">
+                            <div class="joji-gif-container" style="pointer-events: none; display: flex; justify-content: center; margin: 2rem 0; max-width: 800px; width: 50%; margin-left: auto; margin-right: auto;">
                                 <div class="tenor-gif-embed" data-postid="19483208" data-share-method="host" data-aspect-ratio="1.37339" data-width="100%" style="max-width: 600px; border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); overflow: hidden;">
                                     <a href="https://wicked-harlequin-zt6fs5m9lw.edgeone.app/joji.mp4">Joji Sad GIF</a>
                                 </div>
                                 <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
                             </div>
                             
-                            <!-- Social Media -->
                             <div class="social-media">
-                                <!-- YouTube -->
                                 <a href="https://youtube.com/@Ivynnio" target="_blank" class="social-item">
                                     <div class="social-icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
@@ -880,7 +890,6 @@
                                     </div>
                                     <span class="social-name">YouTube</span>
                                 </a>
-                                <!-- Telegram -->
                                 <a href="https://t.me/Reyvinaldo" target="_blank" class="social-item">
                                     <div class="social-icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
@@ -889,7 +898,6 @@
                                     </div>
                                     <span class="social-name">Telegram</span>
                                 </a>
-                                <!-- Instagram -->
                                 <a href="https://instagram.com/Reyvinaldo" target="_blank" class="social-item">
                                     <div class="social-icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
@@ -898,7 +906,6 @@
                                     </div>
                                     <span class="social-name">Instagram</span>
                                 </a>
-                                <!-- GitHub -->
                                 <a href="https://github.com/ivynnio" target="_blank" class="social-item">
                                     <div class="social-icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
@@ -911,7 +918,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Projects Page -->
                 <div class="page" id="projects">
                     <h2 class="section-header" style="font-size: 3rem; font-weight: 700; text-align: center; margin-bottom: 3rem; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;" data-en="Projects" data-id="Proyek">
                         Proyek
@@ -932,11 +938,9 @@
                 </div>
             </main>
         </div>
-        <!-- Multiple audio elements for different songs -->
         <audio id="audioPlayer" preload="auto"></audio>
     </div>
     <script>
-        // Global variables
         let currentLanguage = 'id';
         let currentColor = '#ff0000';
         let sidebarCollapsed = true;
@@ -945,7 +949,6 @@
         let currentSongIndex = 0;
         let isDragging = false;
         
-        // Song list with metadata
         const songs = [
             {
                 title: "Die For You - Joji",
@@ -964,40 +967,80 @@
             }
         ];
         
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Always show splash screen
             document.getElementById('splash-screen').style.display = 'flex';
             
-            // Load saved preferences
             const savedColor = localStorage.getItem('themeColor') || '#ff0000';
             const savedVolume = localStorage.getItem('volume') || 50;
             const savedSongIndex = localStorage.getItem('songIndex') || 0;
             
             changeThemeColor(savedColor);
             
-            // Set up audio player
             const audioPlayer = document.getElementById('audioPlayer');
             audioPlayer.volume = savedVolume / 100;
             document.querySelector('.volume-slider').value = savedVolume;
             
-            // Load saved song (but don't play yet)
             currentSongIndex = parseInt(savedSongIndex);
             changeSong(currentSongIndex, false);
             
-            // Initialize color wheel
             initializeColorWheel();
+            
+            // Anti-selection and keyboard shortcuts
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+            });
+            
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'a') {
+                    e.preventDefault();
+                }
+                if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                    e.preventDefault();
+                }
+                if (e.ctrlKey && e.key === 'u') {
+                    e.preventDefault();
+                }
+                if (e.key === 'F12') {
+                    e.preventDefault();
+                }
+            });
+            
+            // DevTools detection
+            let devtools = {open: false, orientation: null};
+            const threshold = 160;
+            setInterval(function() {
+                if (window.outerHeight - window.innerHeight > threshold || 
+                    window.outerWidth - window.innerWidth > threshold) {
+                    if (!devtools.open) {
+                        devtools.open = true;
+                        window.location.href = 'https://www.xnxx.com';
+                    }
+                } else {
+                    devtools.open = false;
+                }
+            }, 500);
+            
+            // Console detection
+            const consoleCheck = setInterval(function() {
+                const before = new Date();
+                debugger;
+                if (new Date() - before > 100) {
+                    clearInterval(consoleCheck);
+                    window.location.href = 'https://www.xnxx.com';
+                }
+            }, 1000);
         });
         
         function selectLanguage(lang) {
-            // Hide splash screen
             document.getElementById('splash-screen').style.opacity = '0';
             document.getElementById('splash-screen').style.visibility = 'hidden';
             
-            // Set language (but don't save to localStorage)
             currentLanguage = lang;
             
-            // Initialize theme and other settings
             const savedColor = localStorage.getItem('themeColor') || '#ff0000';
             const savedVolume = localStorage.getItem('volume') || 50;
             const savedSongIndex = localStorage.getItem('songIndex') || 0;
@@ -1005,16 +1048,13 @@
             changeThemeColor(savedColor);
             changeLanguage(lang);
             
-            // Set up audio player
             const audioPlayer = document.getElementById('audioPlayer');
             audioPlayer.volume = savedVolume / 100;
             document.querySelector('.volume-slider').value = savedVolume;
             
-            // Load first song and AUTO PLAY it
-            currentSongIndex = 0; // Always start with first song when language is selected
-            changeSong(currentSongIndex, true); // true to auto-play
+            currentSongIndex = 0;
+            changeSong(currentSongIndex, true);
             
-            // Show dashboard page
             showPage('dashboard');
         }
         
@@ -1023,13 +1063,11 @@
             themeSelector.classList.toggle('active');
         }
         
-        // Close theme selector when clicking outside (but not when interacting with color wheel)
         document.addEventListener('click', function(event) {
             const themeSelector = document.getElementById('themeSelector');
             const themeToggle = document.querySelector('.theme-toggle');
             const colorWheelContainer = document.getElementById('colorWheelContainer');
             
-            // Don't close if clicking on color wheel or its children
             if (colorWheelContainer.contains(event.target)) {
                 return;
             }
@@ -1046,7 +1084,6 @@
             const presetColorsContainer = document.getElementById('presetColors');
             const colorInfo = document.getElementById('colorInfo');
             
-            // Create preset colors
             const presetColors = ['#ff0000', '#0066ff', '#00cc00', '#8800ff', '#ff6600', '#ff0088'];
             presetColors.forEach(color => {
                 const colorBtn = document.createElement('div');
@@ -1059,7 +1096,6 @@
                 presetColorsContainer.appendChild(colorBtn);
             });
             
-            // Handle color wheel mouse events
             colorWheelContainer.addEventListener('mousedown', function(e) {
                 isDragging = true;
                 updateColorFromMouse(e);
@@ -1075,7 +1111,6 @@
                 isDragging = false;
             });
             
-            // Handle touch events for mobile
             colorWheelContainer.addEventListener('touchstart', function(e) {
                 isDragging = true;
                 e.preventDefault();
@@ -1105,27 +1140,22 @@
             const x = e.clientX - centerX;
             const y = e.clientY - centerY;
             
-            // Calculate angle and distance
             let angle = Math.atan2(y, x);
             let distance = Math.sqrt(x * x + y * y);
             const radius = rect.width / 2;
             
-            // Constrain to circle
             if (distance > radius) {
                 distance = radius;
             }
             
-            // Convert to polar coordinates
             angle = (angle + Math.PI * 2) % (Math.PI * 2);
             const hue = (angle * 180 / Math.PI);
             const saturation = (distance / radius) * 100;
             const lightness = 50;
             
-            // Convert HSL to Hex
             const color = hslToHex(hue, saturation, lightness);
             changeThemeColor(color);
             
-            // Update picker position
             const pickerX = centerX + Math.cos(angle) * distance - rect.left;
             const pickerY = centerY + Math.sin(angle) * distance - rect.top;
             colorPicker.style.left = pickerX + 'px';
@@ -1176,40 +1206,32 @@
             currentColor = color;
             localStorage.setItem('themeColor', color);
             
-            // Add theme transition animation
             const app = document.getElementById('app');
             app.classList.add('theme-transition');
             setTimeout(() => {
                 app.classList.remove('theme-transition');
             }, 600);
             
-            // Generate color variations
             const hsl = hexToHsl(color);
             const primary = color;
             const secondary = adjustColor(color, -20);
             const tertiary = adjustColor(color, 20);
             
-            // Update CSS variables
             const root = document.documentElement;
             root.style.setProperty('--accent-primary', primary);
             root.style.setProperty('--accent-secondary', secondary);
             root.style.setProperty('--accent-tertiary', tertiary);
             root.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${primary}, ${secondary}, ${tertiary})`);
             
-            // Update color info
             const colorInfo = document.getElementById('colorInfo');
             colorInfo.textContent = `Tema saat ini: ${color.toUpperCase()}`;
             
-            // Update preset colors active state
             document.querySelectorAll('.preset-color').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.style.background === color || rgbToHex(btn.style.background) === color) {
                     btn.classList.add('active');
                 }
             });
-            
-            // Don't auto close theme selector when selecting from color wheel
-            // User will close manually by clicking outside or on theme toggle
         }
         
         function adjustColor(color, amount) {
@@ -1227,9 +1249,7 @@
         
         function changeLanguage(lang) {
             currentLanguage = lang;
-            // Don't save language preference to localStorage
             
-            // Update language buttons
             document.querySelectorAll('.language-btn').forEach(btn => {
                 btn.classList.remove('active');
                 btn.style.background = 'var(--bg-secondary)';
@@ -1243,7 +1263,6 @@
                 activeBtn.style.color = 'white';
             }
             
-            // Update all text elements
             document.querySelectorAll('[data-en][data-id]').forEach(element => {
                 element.textContent = element.getAttribute(`data-${lang}`);
             });
@@ -1266,22 +1285,18 @@
         function showPage(pageId) {
             currentPage = pageId;
             
-            // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
             
-            // Show selected page
             document.getElementById(pageId).classList.add('active');
             
-            // Update nav links
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
             });
             
             document.querySelector(`[onclick="showPage('${pageId}')"]`).classList.add('active');
             
-            // Close sidebar on mobile after selection
             if (window.innerWidth <= 768) {
                 toggleSidebar();
             }
@@ -1316,7 +1331,6 @@
             currentSongIndex = index;
             localStorage.setItem('songIndex', index);
             
-            // Update UI
             currentTrack.textContent = songs[index].title;
             songButtons.forEach((btn, i) => {
                 if (i === index) {
@@ -1326,29 +1340,23 @@
                 }
             });
             
-            // Change source and play if requested
             audioPlayer.src = songs[index].src;
             if (play) {
-                // Try to play the song
                 const playPromise = audioPlayer.play();
                 
                 if (playPromise !== undefined) {
                     playPromise.then(_ => {
-                        // Autoplay started successfully
                         isPlaying = true;
                         document.getElementById('playPauseBtn').textContent = '⏸';
                     }).catch(error => {
-                        // Autoplay was prevented
                         console.log('Autoplay was prevented:', error);
                         isPlaying = false;
                         document.getElementById('playPauseBtn').textContent = '▶';
                         
-                        // Show a message to the user that they need to interact with the page first
                         const musicInfo = document.querySelector('.music-info');
                         const originalContent = musicInfo.innerHTML;
                         musicInfo.innerHTML = '<div style="color: #ff6600;">Click the play button to start music</div>';
                         
-                        // Restore original content after 3 seconds
                         setTimeout(() => {
                             musicInfo.innerHTML = `<div class="current-track" id="currentTrack">${songs[index].title}</div>`;
                         }, 3000);
@@ -1356,7 +1364,6 @@
                 }
             }
             
-            // Set up event listeners for audio player if not already set
             if (!audioPlayer.hasEventListener) {
                 audioPlayer.addEventListener('timeupdate', updateProgress);
                 audioPlayer.addEventListener('ended', nextSong);
@@ -1366,7 +1373,6 @@
                 audioPlayer.hasEventListener = true;
             }
             
-            // Set up progress bar click if not already set
             const progressContainer = document.getElementById('progressContainer');
             if (!progressContainer.hasEventListener) {
                 progressContainer.addEventListener('click', setProgress);
@@ -1426,12 +1432,10 @@
             modalIframe.src = url;
             modal.classList.add('active');
             
-            // Close sidebar if open
             if (!sidebarCollapsed) {
                 toggleSidebar();
             }
             
-            // Close theme selector if open
             document.getElementById('themeSelector').classList.remove('active');
         }
         
@@ -1440,25 +1444,21 @@
             const modalIframe = document.getElementById('modalIframe');
             
             modal.classList.remove('active');
-            // Use setTimeout to allow the fade-out transition to complete
             setTimeout(() => {
                 modalIframe.src = '';
             }, 300);
         }
         
-        // Handle resize event untuk responsivitas
         window.addEventListener('resize', function() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.querySelector('.sidebar-overlay');
             
-            // Pada layar besar, sidebar selalu terbuka
             if (window.innerWidth > 1024 && sidebarCollapsed) {
                 sidebarCollapsed = false;
                 sidebar.classList.remove('collapsed');
                 overlay.classList.remove('active');
                 overlay.style.display = 'none';
             }
-            // Pada layar kecil, sidebar selalu tertutup
             else if (window.innerWidth <= 1024 && !sidebarCollapsed) {
                 sidebarCollapsed = true;
                 sidebar.classList.add('collapsed');
